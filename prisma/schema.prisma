@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Symptom {
+  code    String     @id
+  symptom RuleBase[] @relation("symptom")
+  diese   RuleBase[] @relation("diese")
+}
+
+model Rule {
+  code     String     @id
+  RuleBase RuleBase[]
+}
+
+model RuleBase {
+  Symptom     Symptom @relation("symptom", fields: [symptomCode], references: [code], onDelete: Cascade)
+  symptomCode String
+  Diese       Symptom @relation("diese", fields: [dieseCode], references: [code], onDelete: Cascade)
+  dieseCode   String
+  Rule        Rule    @relation(fields: [ruleCode], references: [code], onDelete: Cascade)
+  ruleCode    String
+
+  @@id([symptomCode, ruleCode, dieseCode])
+}
